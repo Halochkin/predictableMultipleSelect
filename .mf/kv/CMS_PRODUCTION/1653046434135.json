@@ -1,0 +1,41 @@
+{
+  "songs": {
+    "Czech Republic": "We Are Domi - Lights Off",
+    "Romania": "WRS - Llàmame",
+    "Portugal": "Maro - 'Saudade, saudade",
+    "Finland": "The Rasmus - 'Jezebel",
+    "Switzerland": "Marius Bear - 'Boys Do Cry",
+    "France": "Alvan & Ahez - 'Fulenn",
+    "Norway": " Subwoolfer- 'Give That Wolf a Banana",
+    "Armenia": "Rosa Linn - 'Snap",
+    "Italy": "Mahmood & Blanco - 'Brividi",
+    "Spain": "Chanel - 'SloMo",
+    "Netherlands": "S10 - 'De Diepte",
+    "Ukraine": "Kalush Orchestra - 'Stefania",
+    "Germany": "Malik Harris - 'Rockstars",
+    "Lithuania": "Monika Liu - 'Sentimentai",
+    "Azerbaijan": "Nadir Rustamli - 'Fade to Black",
+    "Belgium": "Jérémie Makiese - 'Miss You",
+    "Greece": "Amanda Georgiadi Tenfjord - 'Die Together",
+    "Iceland": "Systur - 'Med hakkandi sol",
+    "Moldova": "Zdob si Zdub &amp; Advahov Brothers - 'Trenuletul",
+    "Sweden": "Cornelia Jakobs - 'Hold Me Closer",
+    "Australia": "Sheldon Riley - 'Not the Same",
+    "United Kingdom": " Sam Ryder - 'Space Man",
+    "Poland": "Ochman - River",
+    "Serbia": "Konstrakta - In Corpore Sano",
+    "Estonia": "Stefan - Hope"
+  },
+  "selected": {
+    "ivar": [
+      "Lithuania",
+      "Ukraine",
+      "Norway"
+    ],
+    "max": [
+      "Ukraine",
+      "Norway",
+      "Sweden"
+    ]
+  }
+}

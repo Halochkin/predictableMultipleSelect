@@ -1,0 +1,214 @@
+<head>
+    <script src="https://cdn.jsdelivr.net/gh/orstavik/parse@v1.0.1/parse.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/orstavik/ElementObserver/constructionFrame.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/orstavik/customEvents@0.1.3/src/customEventsSync.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/orstavik/customAttributes@1.0.4/src/customAttributesAuto.js"></script>
+</head>
+
+<body state="/CMS_DB" render-state>
+
+
+<script type="module" src="./src/cms.js"></script>
+
+<script type="module">
+    class LoadAttr extends Attr {
+        async upgrade() {
+            const response = await fetch(this.value);
+            const detail = await response.json();
+            this.ownerElement.dispatchEvent(new CustomEvent(this.name, {composed: true, bubbles: true, detail}));
+        }
+    }
+
+    customAttributes.define("state", LoadAttr);
+</script>
+
+<script type="module">
+    import {doInnerTextEditable} from "./src/innerTextEditable.js";
+
+    class predictableSearch extends HTMLElement {
+        constructor() {
+            super();
+            this.attachShadow({mode: "open"});
+            //language=css
+            const style = `
+                span[contenteditable] {
+                    opacity: 1;
+                }
+
+                span[active-editing] {
+                    outline: 3px solid orange;
+                    opacity: 1;
+                    color: black;
+                }
+
+                span {
+                    font-family: "Roboto", sans-serif;
+                    /*font-size: 1.5em;*/
+                    opacity: 30%;
+                    vertical-align: baseline;
+                    margin: 10px;
+                }
+            `
+            this.shadowRoot.innerHTML = `<style>${style}</style><span>Search</span>`;
+            const editableElement = this.shadowRoot.querySelector("span");
+
+            setTimeout(() => {
+                this.setAttribute("on-click", "doInnerTextEdit");
+                this.doInnerTextEdit = doInnerTextEditable;
+                const editList = document.querySelector("edit-list");
+                editableElement.openList = editList.open;
+                editableElement.addEventListener("input", editableElement.openList.bind(editList))
+            }, 0);
+        }
+    }
+
+    const template = `
+    <path d="M18,21H6c-1.657,0-3-1.343-3-3V6c0-1.657,1.343-3,3-3h12c1.657,0,3,1.343,3,3v12\tC21,19.657,19.657,21,18,21z"
+          opacity=".35"></path>
+    <path d="M14.812,16.215L7.785,9.188c-0.384-0.384-0.384-1.008,0-1.392l0.011-0.011c0.384-0.384,1.008-0.384,1.392,0l7.027,7.027\tc0.384,0.384,0.384,1.008,0,1.392l-0.011,0.011C15.82,16.599,15.196,16.599,14.812,16.215z"></path>
+    <path d="M7.785,14.812l7.027-7.027c0.384-0.384,1.008-0.384,1.392,0l0.011,0.011c0.384,0.384,0.384,1.008,0,1.392l-7.027,7.027\tc-0.384,0.384-1.008,0.384-1.392,0l-0.011-0.011C7.401,15.82,7.401,15.196,7.785,14.812z"></path>
+  `
+
+    class EuroSong extends HTMLElement {
+        constructor() {
+            super();
+            this.attachShadow({mode: "open"});
+            //language=HTML
+            this.shadowRoot.innerHTML = `
+                <style>
+                    /*language CSS*/
+                    :host {
+                        align-items: center;
+                        background-color: lightgray;
+                        border: 1px solid darkgray;
+                        display: inline-flex;
+                        font-size: .5em;
+                        height: 30px;
+                        margin: 10px;
+                        padding: 5px;
+                        font-family: "Roboto", sans-serif;
+                        border-radius: 5px;
+                    }
+
+                    h1 {
+                        display: inline;
+                    }
+                </style>
+                <svg x="0px" y="0px" width="24" height="24" viewBox="0 0 24 24">${template}</svg>
+                <h1></h1>
+                <!--                <p></p>-->
+            `;
+            const svgBtn = this.shadowRoot.querySelector("svg");
+            svgBtn.removeSong = this.removeSong;
+            setTimeout(() => svgBtn.setAttribute("on-click", "removeSong"), 0);
+        }
+
+        removeSong({target}) {
+            // const target = e.target;
+            const euroList = target.parentElement.getRootNode().host;
+            const editList = document.querySelector("edit-list");
+            editList.close();
+            editList.deselect({target})
+        }
+
+        attributeChangedCallback(name, oldValue, newValue) {
+            if (name === "country")
+                this.shadowRoot.children[1].innerText = newValue;
+            if (name === "title")
+                this.shadowRoot.children[2].innerText = newValue;
+        }
+
+        static get observedAttributes() {
+            return ["country", "title"];
+        }
+    }
+
+    class EuroList extends HTMLElement {
+        constructor() {
+            super();
+            this.attachShadow({mode: "open"});
+            //language=HTML
+            this.shadowRoot.innerHTML = `
+                <style>
+                    :host {
+                        display: block;
+                        border: 2px solid blue;
+                        margin-bottom: 20px;
+                    }
+
+                    h4 {
+                        font-size: 1em;
+                        font-family: "Roboto", sans-serif;
+                        margin: 2%;
+                    }
+
+                    /*::slotted(predictable-search) {*/
+                    /*    vertical-align: super;*/
+                    /*    display: inherit;*/
+                    /* }*/
+
+                </style>
+                <h4>List</h4>
+                <slot></slot>
+            `;
+            setTimeout(() => this.setAttribute("on-focusout", "focusout"));
+
+        }
+
+
+        focusout(e) {
+            const editList = document.querySelector("edit-list");
+            // debugger
+        // todo close result list when focusout
+        }
+
+
+        attributeChangedCallback(name, oldValue, newValue) {
+            this.shadowRoot.querySelector("h4").innerText = `-- ${newValue} --`;
+        }
+
+        static get observedAttributes() {
+            return ["id"];
+        }
+    }
+
+    customElements.define("euro-song", EuroSong);
+    customElements.define("euro-list", EuroList);
+    customElements.define("predictable-search", predictableSearch);
+
+</script>
+
+<script type="module">
+
+    //todo customAttribute <body render-state>.. This is a custom attribute designed for this particular app.
+    //todo Illustrates how the state event is turned into dom. This is probably something that we will replicate
+    //todo using uhtml or lit-html and the like.
+    class RenderAttr extends Attr {
+        onEvent({target, detail: state}) {
+            window.state = state;
+            for (const el of target.querySelectorAll("euro-list"))
+                el.remove();
+            //make the lists
+            for (let [listId, countries] of Object.entries(state.selected)) {
+                const listEl = document.createElement("euro-list");
+                listEl.id = listId;
+                for (let country of countries) {
+                    const songTitle = state.songs[country];
+                    const songEl = document.createElement("euro-song");
+                    songEl.setAttribute("country", country);
+                    songEl.setAttribute("title", songTitle);
+                    songEl.id = country;
+                    listEl.append(songEl);
+                }
+                const predictableSearch = document.createElement("predictable-search");
+                listEl.append(predictableSearch);
+                target.append(listEl);
+            }
+        }
+    }
+
+    customAttributes.define("render", RenderAttr, {sync: true});
+</script>
+
+</body>
+</html>
